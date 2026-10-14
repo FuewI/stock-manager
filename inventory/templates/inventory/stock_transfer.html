@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Move stock — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>Move stock</h1>
+
+    <p>Product: {{ source_entry.product.name }}</p>
+    <p>
+        From: {{ source_entry.bin.storage_space.name }}
+        — Row {{ source_entry.bin.row }},
+        Column {{ source_entry.bin.column }}
+    </p>
+    <p>Available quantity: {{ source_entry.quantity }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Confirm transfer</button>
+    </form>
+
+    <a href="{% url 'storage:storage_bin_detail' source_entry.bin.pk %}">
+        Cancel
+    </a>
+{% endblock %}

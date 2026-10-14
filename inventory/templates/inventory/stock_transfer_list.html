@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Transfer history — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>Transfer history</h1>
+
+    {% for transfer in transfers %}
+        <article>
+            <h2>{{ transfer.product.name }}</h2>
+
+            <p>Quantity moved: {{ transfer.quantity }}</p>
+
+            <p>
+                From:
+                <a href="{% url 'storage:storage_bin_detail' transfer.source_bin.pk %}">
+                    {{ transfer.source_bin.storage_space.name }}
+                    — Row {{ transfer.source_bin.row }},
+                    Column {{ transfer.source_bin.column }}
+                </a>
+            </p>
+
+            <p>
+                To:
+                <a href="{% url 'storage:storage_bin_detail' transfer.destination_bin.pk %}">
+                    {{ transfer.destination_bin.storage_space.name }}
+                    — Row {{ transfer.destination_bin.row }},
+                    Column {{ transfer.destination_bin.column }}
+                </a>
+            </p>
+
+            <p>
+                Date: {{ transfer.created_at|date:"d M Y, H:i" }}
+            </p>
+        </article>
+    {% empty %}
+        <p>No transfers recorded yet.</p>
+    {% endfor %}
+{% endblock %}

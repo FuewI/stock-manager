@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Remove stock — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>Remove stock</h1>
+
+    <p>Product: {{ source_entry.product.name }}</p>
+    <p>Location: {{ source_entry.bin }}</p>
+    <p>Available quantity: {{ source_entry.quantity }}</p>
+    <p>Confirm how many items should leave inventory.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Confirm removal</button>
+    </form>
+
+    <a href="{% url 'storage:storage_bin_detail' source_entry.bin.pk %}">
+        Cancel
+    </a>
+{% endblock %}

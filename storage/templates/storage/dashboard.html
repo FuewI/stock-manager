@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Overview — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>Overview</h1>
+
+    <p>Storage spaces: {{ storage_count }}</p>
+    <p>Product types: {{ product_count }}</p>
+    <p>Total items in stock: {{ total_items }}</p>
+
+    <h2>Recent transfers</h2>
+
+    <ul>
+        {% for transfer in recent_transfers %}
+            <li>
+                {{ transfer.quantity }} × {{ transfer.product.name }}
+                — {{ transfer.source_bin.storage_space.name }}
+                → {{ transfer.destination_bin.storage_space.name }}
+                — {{ transfer.created_at|date:"d M Y, H:i" }}
+            </li>
+        {% empty %}
+            <li>No transfers yet.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'inventory:stock_transfer_list' %}">
+        View all transfers
+    </a>
+{% endblock %}

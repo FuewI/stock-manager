@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete product — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>Delete {{ product.name }}?</h1>
+    <p>SKU: {{ product.sku }}</p>
+    <p>This action cannot be undone.</p>
+
+    {% if error %}
+        <p role="alert">{{ error }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirm deletion</button>
+    </form>
+
+    <a href="{% url 'products:product_detail' product.pk %}">
+        Cancel
+    </a>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete storage space — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>Delete {{ space.name }}?</h1>
+
+    <p>This will permanently delete this storage space and its bins.</p>
+
+    {% if error %}
+        <p role="alert">{{ error }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirm deletion</button>
+    </form>
+
+    <a href="{% url 'storage:storage_space_detail' space.pk %}">
+        Cancel
+    </a>
+{% endblock %}

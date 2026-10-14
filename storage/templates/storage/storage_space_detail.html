@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ space.name }} — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>{{ space.name }}</h1>
+
+    <p>
+        {{ space.get_space_type_display }}
+        · {{ space.rows }} rows × {{ space.columns }} columns
+    </p>
+
+    <a href="{% url 'storage:storage_space_list' %}">
+        Back to storage spaces
+    </a>
+
+    <a href="{% url 'storage:storage_space_edit' space.pk %}">
+        Edit storage space
+    </a>
+
+    <a href="{% url 'storage:storage_space_delete' space.pk %}">
+        Delete storage space
+    </a>
+
+    <h2>Storage grid</h2>
+
+    <div style="
+        display: grid;
+        grid-template-columns: repeat({{ space.columns }}, minmax(100px, 1fr));
+        gap: 12px;
+        overflow-x: auto;
+    ">
+        {% for bin in bins %}
+            {% include 'storage/partials/bin_card.html' with bin=bin only %}
+        {% empty %}
+            <p>No bins have been created for this storage space.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>{{ product.name }}</h1>
+
+    <p>SKU: {{ product.sku }}</p>
+    <p>Space per item: {{ product.space_per_unit }} storage units</p>
+
+    {% if product.description %}
+        <p>{{ product.description }}</p>
+    {% endif %}
+
+    <h2>Categories</h2>
+    <ul>
+        {% for category in product.categories.all %}
+            <li>{{ category.name }}</li>
+        {% empty %}
+            <li>No categories assigned.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Stock locations</h2>
+    <ul>
+        {% for entry in stock_entries %}
+            <li>
+                <a href="{% url 'storage:storage_bin_detail' entry.bin.pk %}">
+                    {{ entry.bin.storage_space.name }}
+                    — Row {{ entry.bin.row }}, Column {{ entry.bin.column }}
+                </a>
+                — {{ entry.quantity }} items
+            </li>
+        {% empty %}
+            <li>This product is not currently stored anywhere.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'products:product_edit' product.pk %}">
+        Edit product
+    </a>
+
+    <a href="{% url 'products:product_list' %}">
+        Back to products
+    </a>
+
+    <a href="{% url 'products:product_delete' product.pk %}">
+        Delete product
+    </a>
+{% endblock %}

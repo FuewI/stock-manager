@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Storage spaces — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>Storage spaces</h1>
+
+    <a href="{% url 'storage:storage_space_create' %}">
+        Create storage space
+    </a>
+
+    <ul>
+        {% for space in spaces %}
+            <li>
+                <a href="{% url 'storage:storage_space_detail' space.pk %}">
+                    {{ space.name }}
+                </a>
+                — {{ space.get_space_type_display }}
+                — {{ space.rows }} rows × {{ space.columns }} columns
+                — Capacity per bin: {{ space.default_bin_capacity }}
+            </li>
+        {% empty %}
+            <li>No storage spaces yet. Create your first one!</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Stock Manager{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <strong>Stock Manager</strong>
+            <a href="{% url 'storage:storage_space_list' %}">
+                Storage spaces
+            </a>
+            <a href="{% url 'storage:storage_space_create' %}">
+                Create storage space
+            </a>
+            <a href="{% url 'products:product_list' %}">
+                Products
+            </a>
+            <a href="{% url 'products:category_list' %}">
+                Categories
+            </a>
+            <a href="{% url 'inventory:stock_transfer_list' %}">
+                Transfer history
+            </a>
+            <a href="{% url 'home' %}">Overview</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>Stock Manager — Visual inventory management</p>
+    </footer>
+</body>
+</html>

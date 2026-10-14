@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% load storage_tags %}
+
+{% block title %}Products — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>Products</h1>
+
+    <a href="{% url 'products:product_create' %}">
+        Create product
+    </a>
+    <form method="get">
+        <label for="product-search">Search products</label>
+        <input
+            id="product-search"
+            type="search"
+            name="q"
+            value="{{ query }}"
+            placeholder="Product name or SKU"
+        >
+
+        <label for="category-filter">Category</label>
+        <select id="category-filter" name="category">
+            <option value="">All categories</option>
+
+            {% for category in categories %}
+                <option
+                    value="{{ category.pk }}"
+                    {% if selected_category == category.pk|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="product-sort">Sort by</label>
+        <select id="product-sort" name="sort">
+            <option value="name" {% if sort == 'name' %}selected{% endif %}>
+                Name A–Z
+            </option>
+            <option value="name_desc" {% if sort == 'name_desc' %}selected{% endif %}>
+                Name Z–A
+            </option>
+            <option value="space" {% if sort == 'space' %}selected{% endif %}>
+                Space per item
+            </option>
+        </select>
+
+        <button type="submit">Apply</button>
+        <a href="{% url 'products:product_list' %}">Reset</a>
+    </form>
+
+    <ul>
+        {% for product in products %}
+            <li>
+                <a href="{% url 'products:product_detail' product.pk %}">
+                    {{ product.name }}
+                </a>
+                — SKU: {{ product.sku }}
+                — Space per item: {{ product.space_per_unit }}
+                <a href="{% url 'products:product_edit' product.pk %}">
+                    Edit
+                </a>
+                <ul>
+                    {% for entry in product.stock_entries.all %}
+                        <li>
+                            <a href="{% url 'storage:storage_bin_detail' entry.bin.pk %}">
+                                {{ entry.bin.storage_space.name }}
+                                — {{ entry.bin.row|row_letter }}{{ entry.bin.column }}
+                            </a>
+                            — {{ entry.quantity }} items
+                        </li>
+                    {% empty %}
+                        <li>Not currently in stock.</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% empty %}
+            <li>No products match. Create a product or reset your filters.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

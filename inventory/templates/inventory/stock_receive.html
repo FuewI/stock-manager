@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Receive stock — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>Receive stock</h1>
+
+    <p>
+        Storage: {{ bin.storage_space.name }}
+        · Row {{ bin.row }}, Column {{ bin.column }}
+    </p>
+    <p>Capacity: {{ bin.capacity }} storage units</p>
+    <p>Currently stored: {{ current_quantity }} items</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add stock</button>
+    </form>
+
+    <a href="{% url 'storage:storage_bin_detail' bin.pk %}">
+        Back to bin
+    </a>
+{% endblock %}

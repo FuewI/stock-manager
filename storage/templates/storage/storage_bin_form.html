@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load storage_tags %}
+
+{% block title %}Edit bin capacity — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>Edit position {{ bin.row|row_letter }}{{ bin.column }}</h1>
+
+    <p>Storage space: {{ bin.storage_space.name }}</p>
+    <p>Currently used: {{ bin.used_capacity }} storage units</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save capacity</button>
+    </form>
+
+    <a href="{% url 'storage:storage_bin_detail' bin.pk %}">
+        Cancel
+    </a>
+{% endblock %}

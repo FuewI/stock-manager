@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Create category — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>Create category</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create category</button>
+    </form>
+
+    <a href="{% url 'products:category_list' %}">
+        Back to categories
+    </a>
+{% endblock %}

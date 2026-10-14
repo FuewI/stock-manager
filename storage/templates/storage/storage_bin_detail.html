@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load storage_tags %}
+
+{% block title %}
+    Position {{ bin.row|row_letter }}{{ bin.column }} — Stock Manager
+{% endblock %}
+
+{% block content %}
+    <h1>Position {{ bin.row|row_letter }}{{ bin.column }}</h1>
+
+    <p>Storage space: {{ bin.storage_space.name }}</p>
+    <p>Space used: {{ bin.used_capacity }} / {{ bin.capacity }}</p>
+
+    <progress
+        value="{{ bin.used_capacity }}"
+        max="{{ bin.capacity }}"
+        aria-label="Bin capacity used"
+        style="width: 100%; height: 18px; accent-color: #0d9488;"
+    >
+        {{ bin.used_capacity }} / {{ bin.capacity }}
+    </progress>
+
+    <p>Available: {{ bin.remaining_capacity }} storage units</p>
+
+    {% if bin.stock_entry %}
+        <h2>Stored product</h2>
+
+        <p>
+            Product:
+            <a href="{% url 'products:product_detail' bin.stock_entry.product.pk %}">
+                {{ bin.stock_entry.product.name }}
+            </a>
+        </p>
+
+        <p>Quantity: {{ bin.stock_entry.quantity }}</p>
+
+        <a href="{% url 'inventory:stock_transfer' bin.pk %}">
+            Move stock
+        </a>
+
+        <a href="{% url 'inventory:stock_remove' bin.pk %}">
+            Remove stock
+        </a>
+    {% else %}
+        <p>This bin is empty.</p>
+    {% endif %}
+
+    <a href="{% url 'inventory:stock_receive' bin.pk %}">
+        Receive stock
+    </a>
+
+    <a href="{% url 'storage:storage_bin_edit' bin.pk %}">
+        Edit capacity
+    </a>
+
+    <a href="{% url 'storage:storage_space_detail' bin.storage_space.pk %}">
+        Back to storage grid
+    </a>
+{% endblock %}

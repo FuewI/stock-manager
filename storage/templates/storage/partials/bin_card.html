@@ -1,0 +1,27 @@
+{% load storage_tags %}
+
+<div style="border: 1px solid #ccc; padding: 16px;">
+    <a href="{% url 'storage:storage_bin_detail' bin.pk %}">
+        {{ bin.row|row_letter }}{{ bin.column }}
+    </a>
+
+    {% if bin.stock_entry %}
+        <p><strong>{{ bin.stock_entry.product.name }}</strong></p>
+        <p>{{ bin.stock_entry.quantity }} items</p>
+    {% else %}
+        <p>Empty</p>
+    {% endif %}
+
+    <p>Space used: {{ bin.used_capacity }} / {{ bin.capacity }}</p>
+
+    <progress
+        value="{{ bin.used_capacity }}"
+        max="{{ bin.capacity }}"
+        aria-label="Bin capacity used"
+        style="width: 100%; height: 18px; accent-color: #0d9488;"
+    >
+        {{ bin.used_capacity }} / {{ bin.capacity }}
+    </progress>
+
+    <p>Available: {{ bin.remaining_capacity }} storage units</p>
+</div>

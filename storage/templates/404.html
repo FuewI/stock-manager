@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Page not found — Stock Manager{% endblock %}
+
+{% block content %}
+    <h1>404 — Page not found</h1>
+    <p>The page you requested does not exist.</p>
+
+    <a href="{% url 'home' %}">Return to overview</a>
+    <a href="{% url 'storage:storage_space_list' %}">
+        View storage spaces
+    </a>
+{% endblock %}
