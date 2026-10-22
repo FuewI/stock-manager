@@ -6,6 +6,7 @@ from django.db.models.deletion import ProtectedError
 from django.db.models import Sum
 from inventory.models import StockEntry, StockTransfer
 from products.models import Product
+from inventory.forms import StockEntryForm, StockRemoveForm, StockTransferForm
 
 
 def storage_space_create(request):
@@ -46,14 +47,44 @@ def storage_space_list(request):
 
 def storage_space_detail(request, pk):
     space = get_object_or_404(StorageSpace, pk=pk)
+    remove_form = None
+
     bins = space.bins.select_related(
         'stock_entry__product',
     ).order_by('row', 'column')
 
+    selected_bin = None
+    selected_id = request.GET.get('bin', '')
+
+    if selected_id.isdigit():
+        selected_bin = get_object_or_404(bins, pk=int(selected_id))
+
+    transfer_form = None
+    receive_form = None
+
+    if selected_bin is not None:
+        source_entry = StockEntry.objects.filter(bin=selected_bin).first()
+
+        if source_entry is not None:
+            remove_form = StockRemoveForm(source_entry=source_entry)
+            transfer_form = StockTransferForm(source_entry=source_entry)
+            receive_form = StockEntryForm(instance=source_entry)
+        else:
+            receive_form = StockEntryForm(
+                instance=StockEntry(bin=selected_bin),
+            )
+
     return render(
         request,
         'storage/storage_space_detail.html',
-        {'space': space, 'bins': bins},
+        {
+            'space': space,
+            'bins': bins,
+            'selected_bin': selected_bin,
+            'transfer_form': transfer_form,
+            'receive_form': receive_form,
+            'remove_form': remove_form,
+        },
     )
 
 def storage_bin_detail(request, pk):

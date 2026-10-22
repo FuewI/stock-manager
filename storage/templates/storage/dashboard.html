@@ -1,30 +1,107 @@
 {% extends 'base.html' %}
+{% load storage_tags %}
 
 {% block title %}Overview — Stock Manager{% endblock %}
 
 {% block content %}
-    <h1>Overview</h1>
+    <div class="page-heading">
+        <div>
+            <h1>Overview</h1>
+            <p class="page-description">
+                Your storage and inventory at a glance.
+            </p>
+        </div>
 
-    <p>Storage spaces: {{ storage_count }}</p>
-    <p>Product types: {{ product_count }}</p>
-    <p>Total items in stock: {{ total_items }}</p>
+        <a class="button button-primary"
+           href="{% url 'storage:storage_space_create' %}">
+            + Create storage space
+        </a>
+    </div>
 
-    <h2>Recent transfers</h2>
+    <div class="summary-grid">
+        <a class="summary-card"
+           href="{% url 'storage:storage_space_list' %}">
+            <span class="summary-label">Storage spaces</span>
+            <strong class="summary-value">{{ storage_count }}</strong>
+            <span class="summary-caption">Warehouses and stores →</span>
+        </a>
 
-    <ul>
-        {% for transfer in recent_transfers %}
-            <li>
-                {{ transfer.quantity }} × {{ transfer.product.name }}
-                — {{ transfer.source_bin.storage_space.name }}
-                → {{ transfer.destination_bin.storage_space.name }}
-                — {{ transfer.created_at|date:"d M Y, H:i" }}
-            </li>
-        {% empty %}
-            <li>No transfers yet.</li>
-        {% endfor %}
-    </ul>
+        <a class="summary-card"
+           href="{% url 'products:product_list' %}">
+            <span class="summary-label">Product types</span>
+            <strong class="summary-value">{{ product_count }}</strong>
+            <span class="summary-caption">Explore your catalog →</span>
+        </a>
 
-    <a href="{% url 'inventory:stock_transfer_list' %}">
-        View all transfers
-    </a>
+        <div class="summary-card">
+            <span class="summary-label">Items in stock</span>
+            <strong class="summary-value">{{ total_items }}</strong>
+            <span class="summary-caption">Across all storage positions</span>
+        </div>
+    </div>
+
+    <section class="dashboard-panel" aria-labelledby="recent-transfers-title">
+        <div class="panel-heading">
+            <h2 id="recent-transfers-title">Recent transfers</h2>
+            <a href="{% url 'inventory:stock_transfer_list' %}">
+                View all →
+            </a>
+        </div>
+
+        {% if recent_transfers %}
+            <div class="table-scroll">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">From</th>
+                            <th scope="col">To</th>
+                            <th scope="col">Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for transfer in recent_transfers %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'products:product_detail' transfer.product.pk %}">
+                                        {{ transfer.product.name }}
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <span class="stock-count">
+                                        {{ transfer.quantity }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <a href="{% url 'storage:storage_bin_detail' transfer.source_bin.pk %}">
+                                        {{ transfer.source_bin.storage_space.name }}
+                                        · {{ transfer.source_bin.row|row_letter }}{{ transfer.source_bin.column }}
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <a href="{% url 'storage:storage_bin_detail' transfer.destination_bin.pk %}">
+                                        {{ transfer.destination_bin.storage_space.name }}
+                                        · {{ transfer.destination_bin.row|row_letter }}{{ transfer.destination_bin.column }}
+                                    </a>
+                                </td>
+
+                                <td class="table-date">
+                                    {{ transfer.created_at|date:"d M Y, H:i" }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="panel-empty">
+                No transfers yet. Move stock between bins to see activity here.
+            </p>
+        {% endif %}
+    </section>
 {% endblock %}

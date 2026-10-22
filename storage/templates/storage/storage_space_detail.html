@@ -1,39 +1,193 @@
 {% extends 'base.html' %}
+{% load storage_tags %}
 
 {% block title %}{{ space.name }} — Stock Manager{% endblock %}
 
 {% block content %}
-    <h1>{{ space.name }}</h1>
+    <div class="page-heading">
+        <div>
+            <h1>{{ space.name }}</h1>
+            <p class="page-description">
+                {{ space.get_space_type_display }}
+                · {{ space.rows }} rows × {{ space.columns }} columns
+            </p>
+        </div>
 
-    <p>
-        {{ space.get_space_type_display }}
-        · {{ space.rows }} rows × {{ space.columns }} columns
-    </p>
-
-    <a href="{% url 'storage:storage_space_list' %}">
-        Back to storage spaces
-    </a>
-
-    <a href="{% url 'storage:storage_space_edit' space.pk %}">
-        Edit storage space
-    </a>
-
-    <a href="{% url 'storage:storage_space_delete' space.pk %}">
-        Delete storage space
-    </a>
-
-    <h2>Storage grid</h2>
-
-    <div style="
-        display: grid;
-        grid-template-columns: repeat({{ space.columns }}, minmax(100px, 1fr));
-        gap: 12px;
-        overflow-x: auto;
-    ">
-        {% for bin in bins %}
-            {% include 'storage/partials/bin_card.html' with bin=bin only %}
-        {% empty %}
-            <p>No bins have been created for this storage space.</p>
-        {% endfor %}
+        <div class="page-actions">
+            <a class="button button-secondary"
+               href="{% url 'storage:storage_space_edit' space.pk %}">
+                Edit storage
+            </a>
+            <a class="button button-danger"
+               href="{% url 'storage:storage_space_delete' space.pk %}">
+                Delete
+            </a>
+        </div>
     </div>
+
+    <div class="warehouse-layout">
+        <section class="storage-map" aria-labelledby="storage-map-title">
+            <div class="map-heading">
+                <h2 id="storage-map-title">Storage map</h2>
+                <span class="badge">
+                    {{ space.rows }} × {{ space.columns }}
+                </span>
+            </div>
+
+            <div class="storage-grid-scroll">
+                <div class="storage-grid"
+                     style="--grid-columns: {{ space.columns }};">
+                    {% for bin in bins %}
+                        {% include 'storage/partials/bin_card.html' with bin=bin selected_bin=selected_bin only %}
+                    {% empty %}
+                        <p>No bins have been created.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="map-legend">
+                <span>
+                    <span class="legend-marker legend-empty" aria-hidden="true"></span>
+                    Empty
+                </span>
+                <span>
+                    <span class="legend-marker legend-stocked" aria-hidden="true"></span>
+                    Contains stock
+                </span>
+            </div>
+        </section>
+
+        <aside class="bin-panel" aria-label="Selected position">
+            {% if selected_bin %}
+                <div class="panel-heading">
+                    <h2>
+                        Position {{ selected_bin.row|row_letter }}{{ selected_bin.column }}
+                    </h2>
+                    <a href="{% url 'storage:storage_space_detail' space.pk %}">
+                        Close
+                    </a>
+                </div>
+
+                {% if selected_bin.stock_entry %}
+                    <h3>{{ selected_bin.stock_entry.product.name }}</h3>
+                    <p class="page-description">
+                        SKU: {{ selected_bin.stock_entry.product.sku }}
+                    </p>
+
+                    <dl class="space-metrics panel-metrics">
+                        <div>
+                            <dt>Quantity</dt>
+                            <dd>{{ selected_bin.stock_entry.quantity }} items</dd>
+                        </div>
+                        <div>
+                            <dt>Space used</dt>
+                            <dd>
+                                {{ selected_bin.used_capacity }} / {{ selected_bin.capacity }}
+                            </dd>
+                        </div>
+                    </dl>
+                {% else %}
+                    <p class="page-description">
+                        This position is empty and ready for stock.
+                    </p>
+                {% endif %}
+
+                <progress
+                    class="capacity-bar"
+                    style="--capacity-step: {% widthratio selected_bin.used_capacity selected_bin.capacity 20 %};"
+                    value="{{ selected_bin.used_capacity }}"
+                    max="{{ selected_bin.capacity }}"
+                    aria-label="Storage units used"
+                >
+                    {{ selected_bin.used_capacity }} / {{ selected_bin.capacity }}
+                </progress>
+
+                <p class="bin-capacity">
+                    {{ selected_bin.remaining_capacity }} storage units available
+                </p>
+
+                <div class="bin-panel-actions">
+
+                    <a class="button button-secondary"
+                       href="{% url 'storage:storage_bin_detail' selected_bin.pk %}">
+                        Full bin details
+                    </a>
+                </div>
+
+                {% if receive_form %}
+                    <details class="panel-transfer" {% if receive_form.errors %}open{% endif %}>
+                        <summary>Receive stock</summary>
+
+                        <form
+                            method="post"
+                            action="{% url 'inventory:stock_receive' selected_bin.pk %}"
+                        >
+                            {% csrf_token %}
+                            <input type="hidden" name="from_map" value="1">
+
+                            {{ receive_form.as_p }}
+
+                            <button type="submit">Add stock</button>
+                        </form>
+                    </details>
+                {% endif %}
+
+                {% if transfer_form %}
+                    <details class="panel-transfer" {% if transfer_form.errors %}open{% endif %}>
+                        <summary>Move stock</summary>
+
+                        <p class="page-description">
+                            Moving from <strong>{{ selected_bin }}</strong>
+                        </p>
+                        
+                        <form
+                            method="post"
+                            action="{% url 'inventory:stock_transfer' selected_bin.pk %}"
+                        >
+                            {% csrf_token %}
+                            <input type="hidden" name="from_map" value="1">
+
+                            {{ transfer_form.as_p }}
+
+                            <button type="submit">Confirm transfer</button>
+                        </form>
+                    </details>
+                {% endif %}
+
+                {% if remove_form %}
+                    <details class="panel-transfer" {% if remove_form.errors %}open{% endif %}>
+                        <summary>Remove stock</summary>
+
+                        <p class="page-description">
+                            This removes items from inventory, rather than moving them.
+                        </p>
+
+                        <form
+                            method="post"
+                            action="{% url 'inventory:stock_remove' selected_bin.pk %}"
+                        >
+                            {% csrf_token %}
+                            <input type="hidden" name="from_map" value="1">
+
+                            {{ remove_form.as_p }}
+
+                            <button class="button button-danger" type="submit">
+                                Confirm removal
+                            </button>
+                        </form>
+                    </details>
+                {% endif %}
+
+            {% else %}
+                <h2>Select a position</h2>
+                <p class="page-description">
+                    Click a bin to see its stock, capacity, and available actions.
+                </p>
+            {% endif %}
+        </aside>
+    </div>
+
+    <a class="back-link" href="{% url 'storage:storage_space_list' %}">
+        ← Back to storage spaces
+    </a>
 {% endblock %}

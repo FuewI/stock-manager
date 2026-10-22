@@ -57,8 +57,19 @@ class StorageBin(models.Model):
     def remaining_capacity(self):
         return self.capacity - self.used_capacity
 
+    @property
+    def position_code(self):
+        number = self.row
+        letters = ''
+
+        while number:
+            number, remainder = divmod(number - 1, 26)
+            letters = chr(65 + remainder) + letters
+
+        return f'{letters}{self.column}'
+
     def __str__(self):
-        return f"Bin ({self.row}, {self.column}) in {self.storage_space.name}"
+        return f'{self.storage_space.name} · {self.position_code}'
 
     def clean(self):
         super().clean()

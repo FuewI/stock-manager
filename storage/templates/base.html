@@ -1,39 +1,101 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>{% block title %}Stock Manager{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'storage/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'storage/css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'storage/css/storage.css' %}">
+    <link rel="stylesheet" href="{% static 'storage/css/forms.css' %}">
+    <link rel="stylesheet" href="{% static 'storage/css/products.css' %}">
+    <link rel="stylesheet" href="{% static 'storage/css/dashboard.css' %}">
 </head>
 <body>
-    <header>
-        <nav>
-            <strong>Stock Manager</strong>
-            <a href="{% url 'storage:storage_space_list' %}">
-                Storage spaces
-            </a>
-            <a href="{% url 'storage:storage_space_create' %}">
-                Create storage space
-            </a>
-            <a href="{% url 'products:product_list' %}">
-                Products
-            </a>
-            <a href="{% url 'products:category_list' %}">
-                Categories
-            </a>
-            <a href="{% url 'inventory:stock_transfer_list' %}">
-                Transfer history
-            </a>
-            <a href="{% url 'home' %}">Overview</a>
-        </nav>
+    <header class="topbar">
+        <a class="brand" href="{% url 'home' %}">
+            <span class="brand-mark" aria-hidden="true">S</span>
+            Stock Manager
+        </a>
+        <span class="topbar-description">Visual inventory management</span>
     </header>
 
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <p class="sidebar-label">Workspace</p>
 
-    <footer>
-        <p>Stock Manager — Visual inventory management</p>
-    </footer>
+            {% with current=request.resolver_match.url_name %}
+                <nav class="sidebar-nav" aria-label="Main navigation">
+                    <a
+                        href="{% url 'home' %}"
+                        {% if current == 'home' or current == 'dashboard' %}
+                            class="active" aria-current="page"
+                        {% endif %}
+                    >
+                        Overview
+                    </a>
+
+                    <a
+                        href="{% url 'storage:storage_space_list' %}"
+                        {% if current == 'storage_space_list' or current == 'storage_space_detail' or current == 'storage_space_edit' or current == 'storage_space_delete' or current == 'storage_bin_detail' or current == 'storage_bin_edit' %}
+                            class="active"
+                        {% endif %}
+                    >
+                        Storage spaces
+                    </a>
+
+                    <a
+                        href="{% url 'products:product_list' %}"
+                        {% if current == 'product_list' or current == 'product_detail' or current == 'product_create' or current == 'product_edit' or current == 'product_delete' %}
+                            class="active"
+                        {% endif %}
+                    >
+                        Products
+                    </a>
+
+                    <a
+                        href="{% url 'products:category_list' %}"
+                        {% if current == 'category_list' or current == 'category_create' %}
+                            class="active"
+                        {% endif %}
+                    >
+                        Categories
+                    </a>
+
+                    <a
+                        href="{% url 'inventory:stock_transfer_list' %}"
+                        {% if current == 'stock_transfer_list' or current == 'stock_transfer' %}
+                            class="active"
+                        {% endif %}
+                    >
+                        Transfer history
+                    </a>
+                </nav>
+
+                <a
+                    class="sidebar-create"
+                    href="{% url 'storage:storage_space_create' %}"
+                    {% if current == 'storage_space_create' %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    + Create storage space
+                </a>
+            {% endwith %}
+        </aside>
+
+        <div class="page-wrapper">
+            <main class="page-content">
+                {% block content %}{% endblock %}
+            </main>
+
+            <footer class="footer">
+                <p>Stock Manager · Visual inventory management</p>
+            </footer>
+        </div>
+    </div>
 </body>
 </html>

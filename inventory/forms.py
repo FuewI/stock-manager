@@ -49,8 +49,16 @@ class StockEntryForm(forms.ModelForm):
 
         return self.current_quantity + quantity_to_add
 
+class DestinationBinChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, bin):
+        available_items = (
+            bin.remaining_capacity // self.product.space_per_unit
+        )
+
+        return f'{bin} — room for {available_items} more'
+
 class StockTransferForm(forms.Form):
-    destination_bin = forms.ModelChoiceField(
+    destination_bin = DestinationBinChoiceField(
         queryset=StorageBin.objects.none(),
         label='Move to',
         empty_label='Select a destination bin',
@@ -65,11 +73,39 @@ class StockTransferForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.source_entry = source_entry
 
-        self.fields['destination_bin'].queryset = (
+        product = source_entry.product
+        destination_field = self.fields['destination_bin']
+        destination_field.product = product
+
+        candidates = (
             StorageBin.objects
             .exclude(pk=source_entry.bin_id)
-            .select_related('storage_space')
+            .select_related('storage_space', 'stock_entry__product')
             .order_by('storage_space__name', 'row', 'column')
+        )
+
+        available_ids = []
+
+        for bin in candidates:
+            try:
+                existing_entry = bin.stock_entry
+            except StockEntry.DoesNotExist:
+                existing_entry = None
+
+            compatible = (
+                existing_entry is None
+                or existing_entry.product_id == product.pk
+            )
+
+            if compatible and bin.remaining_capacity >= product.space_per_unit:
+                available_ids.append(bin.pk)
+
+        destination_field.queryset = candidates.filter(
+            pk__in=available_ids,
+        )
+        destination_field.help_text = (
+            'Only compatible positions with room for at least one item '
+            'are listed.'
         )
 
     def clean(self):

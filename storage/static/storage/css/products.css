@@ -1,0 +1,146 @@
+.product-filters {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+}
+
+.filter-field {
+    flex: 1 1 160px;
+    min-width: 0;
+}
+
+.filter-search {
+    flex: 2 1 240px;
+}
+
+.filter-field label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.filter-field input,
+.filter-field select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: var(--text);
+    background: white;
+    font: inherit;
+    font-size: 14px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(min(100%, 300px), 1fr)
+    );
+    gap: 22px;
+}
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+}
+
+.product-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.product-card-header .badge {
+    overflow-wrap: anywhere;
+}
+
+.product-card-header > a {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.product-card h2 {
+    margin: 18px 0 6px;
+    overflow-wrap: anywhere;
+}
+
+.product-card h2 a {
+    color: var(--text);
+    text-decoration: none;
+}
+
+.product-card h2 a:hover {
+    color: var(--accent-dark);
+}
+
+.product-space {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.product-card h3 {
+    margin: 24px 0 10px;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.stock-locations {
+    margin: 0 0 24px;
+    padding: 0;
+    list-style: none;
+}
+
+.stock-locations li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+
+.stock-locations a {
+    overflow-wrap: anywhere;
+    text-decoration: none;
+}
+
+.stock-count {
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.stock-unavailable {
+    color: var(--muted);
+}
+
+.product-details-link {
+    width: 100%;
+    margin-top: auto;
+}

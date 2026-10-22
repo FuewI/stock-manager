@@ -1,27 +1,49 @@
-{% load storage_tags %}
+<a
+    class="bin-card {% if bin.stock_entry %}bin-stocked{% else %}bin-empty{% endif %} {% if bin.pk == selected_bin.pk %}bin-selected{% endif %}"
+    href="{% url 'storage:storage_space_detail' bin.storage_space_id %}?bin={{ bin.pk }}"
+>
+    <span class="bin-card-top">
+        <strong class="bin-code">{{ bin.position_code }}</strong>
+        <span class="bin-status">
+            {% if bin.stock_entry %}Occupied{% else %}Available{% endif %}
+        </span>
+    </span>
 
-<div style="border: 1px solid #ccc; padding: 16px;">
-    <a href="{% url 'storage:storage_bin_detail' bin.pk %}">
-        {{ bin.row|row_letter }}{{ bin.column }}
-    </a>
+    <span class="bin-symbol" aria-hidden="true">
+        {% if bin.stock_entry %}
+            <svg viewBox="0 0 24 24" width="30" height="30"
+                 fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="m12 3 9 5v8l-9 5-9-5V8z"/>
+                <path d="m3 8 9 5 9-5M12 13v8M7.5 5.5l9 5"/>
+            </svg>
+        {% else %}
+            +
+        {% endif %}
+    </span>
 
     {% if bin.stock_entry %}
-        <p><strong>{{ bin.stock_entry.product.name }}</strong></p>
-        <p>{{ bin.stock_entry.quantity }} items</p>
+        <strong class="bin-product">
+            {{ bin.stock_entry.product.name }}
+        </strong>
+        <span class="bin-quantity">
+            {{ bin.stock_entry.quantity }} items
+        </span>
     {% else %}
-        <p>Empty</p>
+        <strong class="bin-product">Empty position</strong>
+        <span class="bin-quantity">Click to manage</span>
     {% endif %}
 
-    <p>Space used: {{ bin.used_capacity }} / {{ bin.capacity }}</p>
-
     <progress
+        class="capacity-bar"
+        style="--capacity-step: {% widthratio bin.used_capacity bin.capacity 20 %};"
         value="{{ bin.used_capacity }}"
         max="{{ bin.capacity }}"
-        aria-label="Bin capacity used"
-        style="width: 100%; height: 18px; accent-color: #0d9488;"
+        aria-label="Storage units used"
     >
         {{ bin.used_capacity }} / {{ bin.capacity }}
     </progress>
 
-    <p>Available: {{ bin.remaining_capacity }} storage units</p>
-</div>
+    <span class="bin-capacity">
+        {{ bin.used_capacity }} / {{ bin.capacity }} units
+    </span>
+</a>

@@ -3,24 +3,63 @@
 {% block title %}Storage spaces — Stock Manager{% endblock %}
 
 {% block content %}
-    <h1>Storage spaces</h1>
+    <div class="page-heading">
+        <div>
+            <h1>Storage spaces</h1>
+            <p class="page-description">
+                Explore your warehouses and stores.
+            </p>
+        </div>
 
-    <a href="{% url 'storage:storage_space_create' %}">
-        Create storage space
-    </a>
+        <a class="button button-primary"
+           href="{% url 'storage:storage_space_create' %}">
+            + Create storage space
+        </a>
+    </div>
 
-    <ul>
+    <div class="space-grid">
         {% for space in spaces %}
-            <li>
-                <a href="{% url 'storage:storage_space_detail' space.pk %}">
-                    {{ space.name }}
+            <article class="space-card">
+                <div class="space-card-header">
+                    <span class="space-icon" aria-hidden="true">
+                        {% if space.space_type == 'warehouse' %}W{% else %}S{% endif %}
+                    </span>
+                    <span class="badge">
+                        {{ space.get_space_type_display }}
+                    </span>
+                </div>
+
+                <h2>
+                    <a href="{% url 'storage:storage_space_detail' space.pk %}">
+                        {{ space.name }}
+                    </a>
+                </h2>
+
+                <dl class="space-metrics">
+                    <div>
+                        <dt>Grid size</dt>
+                        <dd>{{ space.rows }} × {{ space.columns }}</dd>
+                    </div>
+                    <div>
+                        <dt>Default bin capacity</dt>
+                        <dd>{{ space.default_bin_capacity }} units</dd>
+                    </div>
+                </dl>
+
+                <a class="button button-secondary"
+                   href="{% url 'storage:storage_space_detail' space.pk %}">
+                    Open storage map →
                 </a>
-                — {{ space.get_space_type_display }}
-                — {{ space.rows }} rows × {{ space.columns }} columns
-                — Capacity per bin: {{ space.default_bin_capacity }}
-            </li>
+            </article>
         {% empty %}
-            <li>No storage spaces yet. Create your first one!</li>
+            <div class="empty-state">
+                <h2>Your first storage space starts here</h2>
+                <p>Create a warehouse or store to begin organizing stock.</p>
+                <a class="button button-primary"
+                   href="{% url 'storage:storage_space_create' %}">
+                    Create storage space
+                </a>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}

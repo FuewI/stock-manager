@@ -1,85 +1,133 @@
 {% extends 'base.html' %}
-
 {% load storage_tags %}
 
 {% block title %}Products — Stock Manager{% endblock %}
 
 {% block content %}
-    <h1>Products</h1>
+    <div class="page-heading">
+        <div>
+            <h1>Products</h1>
+            <p class="page-description">
+                Find products and see where they are stored.
+            </p>
+        </div>
 
-    <a href="{% url 'products:product_create' %}">
-        Create product
-    </a>
-    <form method="get">
-        <label for="product-search">Search products</label>
-        <input
-            id="product-search"
-            type="search"
-            name="q"
-            value="{{ query }}"
-            placeholder="Product name or SKU"
-        >
+        <a class="button button-primary"
+           href="{% url 'products:product_create' %}">
+            + Create product
+        </a>
+    </div>
 
-        <label for="category-filter">Category</label>
-        <select id="category-filter" name="category">
-            <option value="">All categories</option>
+    <form method="get" class="product-filters">
+        <div class="filter-field filter-search">
+            <label for="product-search">Search</label>
+            <input
+                id="product-search"
+                type="search"
+                name="q"
+                value="{{ query }}"
+                placeholder="Product name or SKU"
+            >
+        </div>
 
-            {% for category in categories %}
-                <option
-                    value="{{ category.pk }}"
-                    {% if selected_category == category.pk|stringformat:"s" %}
-                        selected
-                    {% endif %}
-                >
-                    {{ category.name }}
+        <div class="filter-field">
+            <label for="category-filter">Category</label>
+            <select id="category-filter" name="category">
+                <option value="">All categories</option>
+
+                {% for category in categories %}
+                    <option
+                        value="{{ category.pk }}"
+                        {% if selected_category == category.pk|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label for="product-sort">Sort by</label>
+            <select id="product-sort" name="sort">
+                <option value="name" {% if sort == 'name' %}selected{% endif %}>
+                    Name A–Z
                 </option>
-            {% endfor %}
-        </select>
+                <option value="name_desc" {% if sort == 'name_desc' %}selected{% endif %}>
+                    Name Z–A
+                </option>
+                <option value="space" {% if sort == 'space' %}selected{% endif %}>
+                    Space per item
+                </option>
+            </select>
+        </div>
 
-        <label for="product-sort">Sort by</label>
-        <select id="product-sort" name="sort">
-            <option value="name" {% if sort == 'name' %}selected{% endif %}>
-                Name A–Z
-            </option>
-            <option value="name_desc" {% if sort == 'name_desc' %}selected{% endif %}>
-                Name Z–A
-            </option>
-            <option value="space" {% if sort == 'space' %}selected{% endif %}>
-                Space per item
-            </option>
-        </select>
-
-        <button type="submit">Apply</button>
-        <a href="{% url 'products:product_list' %}">Reset</a>
+        <div class="filter-actions">
+            <button class="button button-primary" type="submit">
+                Apply
+            </button>
+            <a class="button button-secondary"
+               href="{% url 'products:product_list' %}">
+                Reset
+            </a>
+        </div>
     </form>
 
-    <ul>
+    <div class="product-grid">
         {% for product in products %}
-            <li>
-                <a href="{% url 'products:product_detail' product.pk %}">
-                    {{ product.name }}
-                </a>
-                — SKU: {{ product.sku }}
-                — Space per item: {{ product.space_per_unit }}
-                <a href="{% url 'products:product_edit' product.pk %}">
-                    Edit
-                </a>
-                <ul>
+            <article class="product-card">
+                <div class="product-card-header">
+                    <span class="badge">{{ product.sku }}</span>
+                    <a href="{% url 'products:product_edit' product.pk %}">
+                        Edit
+                    </a>
+                </div>
+
+                <h2>
+                    <a href="{% url 'products:product_detail' product.pk %}">
+                        {{ product.name }}
+                    </a>
+                </h2>
+
+                <p class="product-space">
+                    {{ product.space_per_unit }} storage units per item
+                </p>
+
+                <h3>Stock locations</h3>
+
+                <ul class="stock-locations">
                     {% for entry in product.stock_entries.all %}
                         <li>
                             <a href="{% url 'storage:storage_bin_detail' entry.bin.pk %}">
                                 {{ entry.bin.storage_space.name }}
-                                — {{ entry.bin.row|row_letter }}{{ entry.bin.column }}
+                                · {{ entry.bin.row|row_letter }}{{ entry.bin.column }}
                             </a>
-                            — {{ entry.quantity }} items
+                            <span class="stock-count">
+                                {{ entry.quantity }} items
+                            </span>
                         </li>
                     {% empty %}
-                        <li>Not currently in stock.</li>
+                        <li class="stock-unavailable">
+                            Not currently in stock.
+                        </li>
                     {% endfor %}
                 </ul>
-            </li>
+
+                <a class="button button-secondary product-details-link"
+                   href="{% url 'products:product_detail' product.pk %}">
+                    View product →
+                </a>
+            </article>
         {% empty %}
-            <li>No products match. Create a product or reset your filters.</li>
+            <div class="empty-state">
+                <h2>No products found</h2>
+                <p>Create a product or reset your search filters.</p>
+                <a class="button button-secondary"
+                   href="{% url 'products:product_list' %}">
+                    Reset filters
+                </a>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}
