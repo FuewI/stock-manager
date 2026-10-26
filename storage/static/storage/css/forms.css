@@ -99,3 +99,12 @@
         padding: 20px;
     }
 }
+
+.page-content form.confirmation-form[method="post"] {
+    max-width: none;
+    margin: 24px 0 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}

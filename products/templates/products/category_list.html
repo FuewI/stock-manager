@@ -3,22 +3,59 @@
 {% block title %}Categories — Stock Manager{% endblock %}
 
 {% block content %}
-    <h1>Categories</h1>
+    <div class="page-heading">
+        <div>
+            <h1>Categories</h1>
+            <p class="page-description">
+                Organize your products into meaningful groups.
+            </p>
+        </div>
 
-    <a href="{% url 'products:category_create' %}">
-        Create category
-    </a>
+        <a class="button button-primary"
+           href="{% url 'products:category_create' %}">
+            + Create category
+        </a>
+    </div>
 
-    <ul>
+    <div class="category-grid">
         {% for category in categories %}
-            <li>
-                <strong>{{ category.name }}</strong>
+            <article class="category-card">
+                <span class="category-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="24" height="24"
+                         fill="none" stroke="currentColor"
+                         stroke-width="1.5" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M20 13 11 22 2 13V2h11l9 9a1.4 1.4 0 0 1 0 2z"/>
+                        <circle cx="7" cy="7" r="1"/>
+                    </svg>
+                </span>
+
+                <h2>{{ category.name }}</h2>
+
                 {% if category.description %}
-                    <p>{{ category.description }}</p>
+                    <div class="category-description">
+                        {{ category.description|linebreaks }}
+                    </div>
+                {% else %}
+                    <p class="category-description">
+                        No description provided.
+                    </p>
                 {% endif %}
-            </li>
+
+                <a class="button button-secondary"
+                   href="{% url 'products:product_list' %}?category={{ category.pk }}">
+                    Browse products →
+                </a>
+            </article>
         {% empty %}
-            <li>No categories yet.</li>
+            <div class="empty-state">
+                <h2>No categories yet</h2>
+                <p>Create your first category to organize products.</p>
+                <a class="button button-primary"
+                   href="{% url 'products:category_create' %}">
+                    Create category
+                </a>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}

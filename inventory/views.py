@@ -16,24 +16,24 @@ def stock_receive(request, bin_pk):
 
     current_quantity = stock_entry.quantity if stock_entry.pk else 0
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = StockEntryForm(request.POST, instance=stock_entry)
 
         if form.is_valid():
             form.save()
 
-            if request.POST.get('from_map') == '1':
+            if request.POST.get("from_map") == "1":
                 map_url = reverse(
-                    'storage:storage_space_detail',
+                    "storage:storage_space_detail",
                     args=[bin.storage_space_id],
                 )
-                return redirect(f'{map_url}?bin={bin.pk}')
+                return redirect(f"{map_url}?bin={bin.pk}")
 
-            return redirect('storage:storage_bin_detail', pk=bin.pk)
+            return redirect("storage:storage_bin_detail", pk=bin.pk)
     else:
         form = StockEntryForm(instance=stock_entry)
 
-    if request.method == 'POST' and request.POST.get('from_map') == '1':
+    if request.method == "POST" and request.POST.get("from_map") == "1":
         saved_entry = StockEntry.objects.filter(bin=bin).first()
 
         transfer_form = (
@@ -44,16 +44,16 @@ def stock_receive(request, bin_pk):
 
         return render(
             request,
-            'storage/storage_space_detail.html',
+            "storage/storage_space_detail.html",
             {
-                'space': bin.storage_space,
-                'bins': bin.storage_space.bins.select_related(
-                    'stock_entry__product',
-                ).order_by('row', 'column'),
-                'selected_bin': bin,
-                'receive_form': form,
-                'transfer_form': transfer_form,
-                'remove_form': (
+                "space": bin.storage_space,
+                "bins": bin.storage_space.bins.select_related(
+                    "stock_entry__product",
+                ).order_by("row", "column"),
+                "selected_bin": bin,
+                "receive_form": form,
+                "transfer_form": transfer_form,
+                "remove_form": (
                     StockRemoveForm(source_entry=saved_entry)
                     if saved_entry is not None
                     else None
@@ -63,13 +63,14 @@ def stock_receive(request, bin_pk):
 
     return render(
         request,
-        'inventory/stock_receive.html',
+        "inventory/stock_receive.html",
         {
-            'form': form,
-            'bin': bin,
-            'current_quantity': current_quantity,
+            "form": form,
+            "bin": bin,
+            "current_quantity": current_quantity,
         },
     )
+
 
 def stock_transfer(request, bin_pk):
     with transaction.atomic():
@@ -78,15 +79,15 @@ def stock_transfer(request, bin_pk):
             bin_id=bin_pk,
         )
 
-        if request.method == 'POST':
+        if request.method == "POST":
             form = StockTransferForm(
                 request.POST,
                 source_entry=source_entry,
             )
 
             if form.is_valid():
-                destination = form.cleaned_data['destination_bin']
-                quantity = form.cleaned_data['quantity']
+                destination = form.cleaned_data["destination_bin"]
+                quantity = form.cleaned_data["quantity"]
 
                 destination_entry = StockEntry.objects.filter(
                     bin=destination,
@@ -118,68 +119,66 @@ def stock_transfer(request, bin_pk):
                 else:
                     source_entry.save()
 
-                if request.POST.get('from_map') == '1':
+                if request.POST.get("from_map") == "1":
                     map_url = reverse(
-                        'storage:storage_space_detail',
+                        "storage:storage_space_detail",
                         args=[source_entry.bin.storage_space_id],
                     )
-                    return redirect(f'{map_url}?bin={bin_pk}')
+                    return redirect(f"{map_url}?bin={bin_pk}")
 
                 return redirect(
-                    'storage:storage_bin_detail',
+                    "storage:storage_bin_detail",
                     pk=bin_pk,
                 )
         else:
             form = StockTransferForm(source_entry=source_entry)
 
-        if (
-            request.method == 'POST'
-            and request.POST.get('from_map') == '1'
-        ):
+        if request.method == "POST" and request.POST.get("from_map") == "1":
             space = source_entry.bin.storage_space
 
             bins = space.bins.select_related(
-                'stock_entry__product',
-            ).order_by('row', 'column')
+                "stock_entry__product",
+            ).order_by("row", "column")
 
             return render(
                 request,
-                'storage/storage_space_detail.html',
+                "storage/storage_space_detail.html",
                 {
-                    'space': space,
-                    'bins': bins,
-                    'selected_bin': source_entry.bin,
-                    'transfer_form': form,
-                    'receive_form': StockEntryForm(
+                    "space": space,
+                    "bins": bins,
+                    "selected_bin": source_entry.bin,
+                    "transfer_form": form,
+                    "receive_form": StockEntryForm(
                         instance=source_entry,
                     ),
-                    'remove_form': StockRemoveForm(
+                    "remove_form": StockRemoveForm(
                         source_entry=source_entry,
                     ),
                 },
             )
-
         return render(
             request,
-            'inventory/stock_transfer.html',
+            "inventory/stock_transfer.html",
             {
-                'form': form,
-                'source_entry': source_entry,
+                "form": form,
+                "source_entry": source_entry,
             },
         )
 
+
 def stock_transfer_list(request):
     transfers = StockTransfer.objects.select_related(
-        'product',
-        'source_bin__storage_space',
-        'destination_bin__storage_space',
-    ).order_by('-created_at', '-pk')
+        "product",
+        "source_bin__storage_space",
+        "destination_bin__storage_space",
+    ).order_by("-created_at", "-pk")
 
     return render(
         request,
-        'inventory/stock_transfer_list.html',
-        {'transfers': transfers},
+        "inventory/stock_transfer_list.html",
+        {"transfers": transfers},
     )
+
 
 def stock_remove(request, bin_pk):
     with transaction.atomic():
@@ -189,47 +188,47 @@ def stock_remove(request, bin_pk):
         )
         bin = source_entry.bin
 
-        if request.method == 'POST':
+        if request.method == "POST":
             form = StockRemoveForm(
                 request.POST,
                 source_entry=source_entry,
             )
 
             if form.is_valid():
-                source_entry.quantity -= form.cleaned_data['quantity']
+                source_entry.quantity -= form.cleaned_data["quantity"]
 
                 if source_entry.quantity == 0:
                     source_entry.delete()
                 else:
                     source_entry.save()
 
-                if request.POST.get('from_map') == '1':
+                if request.POST.get("from_map") == "1":
                     map_url = reverse(
-                        'storage:storage_space_detail',
+                        "storage:storage_space_detail",
                         args=[bin.storage_space_id],
                     )
-                    return redirect(f'{map_url}?bin={bin.pk}')
+                    return redirect(f"{map_url}?bin={bin.pk}")
 
                 return redirect(
-                    'storage:storage_bin_detail',
+                    "storage:storage_bin_detail",
                     pk=bin.pk,
                 )
         else:
             form = StockRemoveForm(source_entry=source_entry)
 
-        if request.method == 'POST' and request.POST.get('from_map') == '1':
+        if request.method == "POST" and request.POST.get("from_map") == "1":
             return render(
                 request,
-                'storage/storage_space_detail.html',
+                "storage/storage_space_detail.html",
                 {
-                    'space': bin.storage_space,
-                    'bins': bin.storage_space.bins.select_related(
-                        'stock_entry__product',
-                    ).order_by('row', 'column'),
-                    'selected_bin': bin,
-                    'remove_form': form,
-                    'receive_form': StockEntryForm(instance=source_entry),
-                    'transfer_form': StockTransferForm(
+                    "space": bin.storage_space,
+                    "bins": bin.storage_space.bins.select_related(
+                        "stock_entry__product",
+                    ).order_by("row", "column"),
+                    "selected_bin": bin,
+                    "remove_form": form,
+                    "receive_form": StockEntryForm(instance=source_entry),
+                    "transfer_form": StockTransferForm(
                         source_entry=source_entry,
                     ),
                 },
@@ -237,6 +236,6 @@ def stock_remove(request, bin_pk):
 
         return render(
             request,
-            'inventory/stock_remove.html',
-            {'form': form, 'source_entry': source_entry},
+            "inventory/stock_remove.html",
+            {"form": form, "source_entry": source_entry},
         )

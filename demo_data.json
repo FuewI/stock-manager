@@ -1,0 +1,175 @@
+[
+  {
+    "model": "products.category",
+    "pk": 1,
+    "fields": {
+      "name": "Electronics",
+      "description": "Computer accessories and electronic devices."
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 2,
+    "fields": {
+      "name": "Office",
+      "description": "Equipment for everyday office work."
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 1,
+    "fields": {
+      "name": "Wireless Mouse",
+      "sku": "DEMO-MOUSE-001",
+      "description": "Compact wireless mouse.",
+      "space_per_unit": 1,
+      "categories": [1, 2]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 2,
+    "fields": {
+      "name": "USB Keyboard",
+      "sku": "DEMO-KEYBOARD-001",
+      "description": "Full-size keyboard with USB connection.",
+      "space_per_unit": 2,
+      "categories": [1, 2]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 3,
+    "fields": {
+      "name": "Headphones",
+      "sku": "DEMO-AUDIO-001",
+      "description": "Over-ear headphones.",
+      "space_per_unit": 5,
+      "categories": [1]
+    }
+  },
+  {
+    "model": "storage.storagespace",
+    "pk": 1,
+    "fields": {
+      "name": "Central Warehouse",
+      "space_type": "warehouse",
+      "rows": 2,
+      "columns": 3,
+      "default_bin_capacity": 100
+    }
+  },
+  {
+    "model": "storage.storagespace",
+    "pk": 2,
+    "fields": {
+      "name": "City Store",
+      "space_type": "store",
+      "rows": 2,
+      "columns": 2,
+      "default_bin_capacity": 20
+    }
+  },
+  {
+    "model": "storage.storagebin",
+    "pk": 1,
+    "fields": {"storage_space": 1, "row": 1, "column": 1, "capacity": 100}
+  },
+  {
+    "model": "storage.storagebin",
+    "pk": 2,
+    "fields": {"storage_space": 1, "row": 1, "column": 2, "capacity": 100}
+  },
+  {
+    "model": "storage.storagebin",
+    "pk": 3,
+    "fields": {"storage_space": 1, "row": 1, "column": 3, "capacity": 100}
+  },
+  {
+    "model": "storage.storagebin",
+    "pk": 4,
+    "fields": {"storage_space": 1, "row": 2, "column": 1, "capacity": 100}
+  },
+  {
+    "model": "storage.storagebin",
+    "pk": 5,
+    "fields": {"storage_space": 1, "row": 2, "column": 2, "capacity": 100}
+  },
+  {
+    "model": "storage.storagebin",
+    "pk": 6,
+    "fields": {"storage_space": 1, "row": 2, "column": 3, "capacity": 100}
+  },
+  {
+    "model": "storage.storagebin",
+    "pk": 7,
+    "fields": {"storage_space": 2, "row": 1, "column": 1, "capacity": 20}
+  },
+  {
+    "model": "storage.storagebin",
+    "pk": 8,
+    "fields": {"storage_space": 2, "row": 1, "column": 2, "capacity": 20}
+  },
+  {
+    "model": "storage.storagebin",
+    "pk": 9,
+    "fields": {"storage_space": 2, "row": 2, "column": 1, "capacity": 20}
+  },
+  {
+    "model": "storage.storagebin",
+    "pk": 10,
+    "fields": {"storage_space": 2, "row": 2, "column": 2, "capacity": 20}
+  },
+  {
+    "model": "inventory.stockentry",
+    "pk": 1,
+    "fields": {"product": 1, "bin": 1, "quantity": 25}
+  },
+  {
+    "model": "inventory.stockentry",
+    "pk": 2,
+    "fields": {"product": 2, "bin": 2, "quantity": 25}
+  },
+  {
+    "model": "inventory.stockentry",
+    "pk": 3,
+    "fields": {"product": 3, "bin": 3, "quantity": 15}
+  },
+  {
+    "model": "inventory.stockentry",
+    "pk": 4,
+    "fields": {"product": 1, "bin": 4, "quantity": 100}
+  },
+  {
+    "model": "inventory.stockentry",
+    "pk": 5,
+    "fields": {"product": 1, "bin": 7, "quantity": 10}
+  },
+  {
+    "model": "inventory.stockentry",
+    "pk": 6,
+    "fields": {"product": 2, "bin": 8, "quantity": 5}
+  },
+  {
+    "model": "inventory.stocktransfer",
+    "pk": 1,
+    "fields": {
+      "product": 1,
+      "source_bin": 1,
+      "destination_bin": 7,
+      "quantity": 10,
+      "created_at": "2026-10-22T10:00:00Z"
+    }
+  },
+  {
+    "model": "inventory.stocktransfer",
+    "pk": 2,
+    "fields": {
+      "product": 2,
+      "source_bin": 2,
+      "destination_bin": 8,
+      "quantity": 5,
+      "created_at": "2026-10-22T11:00:00Z"
+    }
+  }
+]

@@ -13,7 +13,7 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Confirm removal</button>
+        <button class="button button-danger" type="submit">Confirm removal</button>
     </form>
 
     <a href="{% url 'storage:storage_bin_detail' source_entry.bin.pk %}">

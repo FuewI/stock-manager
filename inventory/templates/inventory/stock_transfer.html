@@ -13,6 +13,14 @@
     </p>
     <p>Available quantity: {{ source_entry.quantity }}</p>
 
+    {% if not form.destination_bin.field.queryset %}
+        <p class="page-description">
+            No compatible destination bins have room for this product.
+            Free space in a compatible bin or
+            <a href="{% url 'storage:storage_space_create' %}">create another storage space</a>.
+        </p>
+    {% endif %}
+
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

@@ -3,48 +3,124 @@
 {% block title %}{{ product.name }} — Stock Manager{% endblock %}
 
 {% block content %}
-    <h1>{{ product.name }}</h1>
+    <div class="page-heading">
+        <div>
+            <h1>{{ product.name }}</h1>
+            <p class="page-description">
+                Product details and stock locations.
+            </p>
+        </div>
 
-    <p>SKU: {{ product.sku }}</p>
-    <p>Space per item: {{ product.space_per_unit }} storage units</p>
+        <div class="page-actions">
+            <a class="button button-secondary"
+               href="{% url 'products:product_edit' product.pk %}">
+                Edit product
+            </a>
+            <a class="button button-danger"
+               href="{% url 'products:product_delete' product.pk %}">
+                Delete product
+            </a>
+        </div>
+    </div>
 
-    {% if product.description %}
-        <p>{{ product.description }}</p>
-    {% endif %}
+    <div class="product-detail-layout">
+        <section class="product-info-panel" aria-labelledby="product-info-title">
+            <h2 id="product-info-title">Product information</h2>
 
-    <h2>Categories</h2>
-    <ul>
-        {% for category in product.categories.all %}
-            <li>{{ category.name }}</li>
-        {% empty %}
-            <li>No categories assigned.</li>
-        {% endfor %}
-    </ul>
+            <dl class="product-facts">
+                <div>
+                    <dt>SKU</dt>
+                    <dd>{{ product.sku }}</dd>
+                </div>
+                <div>
+                    <dt>Space per item</dt>
+                    <dd>{{ product.space_per_unit }} storage units</dd>
+                </div>
+            </dl>
 
-    <h2>Stock locations</h2>
-    <ul>
-        {% for entry in stock_entries %}
-            <li>
-                <a href="{% url 'storage:storage_bin_detail' entry.bin.pk %}">
-                    {{ entry.bin.storage_space.name }}
-                    — Row {{ entry.bin.row }}, Column {{ entry.bin.column }}
-                </a>
-                — {{ entry.quantity }} items
-            </li>
-        {% empty %}
-            <li>This product is not currently stored anywhere.</li>
-        {% endfor %}
-    </ul>
+            <h3>Description</h3>
 
-    <a href="{% url 'products:product_edit' product.pk %}">
-        Edit product
-    </a>
+            {% if product.description %}
+                <div class="product-description">
+                    {{ product.description|linebreaks }}
+                </div>
+            {% else %}
+                <p class="page-description">No description provided.</p>
+            {% endif %}
 
-    <a href="{% url 'products:product_list' %}">
-        Back to products
-    </a>
+            <h3>Categories</h3>
 
-    <a href="{% url 'products:product_delete' product.pk %}">
-        Delete product
+            <ul class="category-badges">
+                {% for category in product.categories.all %}
+                    <li class="badge">{{ category.name }}</li>
+                {% empty %}
+                    <li class="page-description">No categories assigned.</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section class="product-locations-panel"
+                 aria-labelledby="stock-locations-title">
+            <div class="panel-heading">
+                <h2 id="stock-locations-title">Stock locations</h2>
+            </div>
+
+            {% if stock_entries %}
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Storage space</th>
+                                <th scope="col">Position</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Space used</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for entry in stock_entries %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'storage:storage_space_detail' entry.bin.storage_space.pk %}">
+                                            {{ entry.bin.storage_space.name }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a class="position-link"
+                                           href="{% url 'storage:storage_space_detail' entry.bin.storage_space.pk %}?bin={{ entry.bin.pk }}">
+                                            {{ entry.bin.position_code }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="stock-count">
+                                            {{ entry.quantity }} items
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {{ entry.used_capacity }} units
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="product-stock-empty">
+                    <h3>No stock yet</h3>
+                    <p>
+                        Open a storage map and select an empty position
+                        to receive this product.
+                    </p>
+                    <a class="button button-secondary"
+                       href="{% url 'storage:storage_space_list' %}">
+                        Open storage spaces
+                    </a>
+                </div>
+            {% endif %}
+        </section>
+    </div>
+
+    <a class="back-link" href="{% url 'products:product_list' %}">
+        ← Back to products
     </a>
 {% endblock %}

@@ -144,3 +144,152 @@
     width: 100%;
     margin-top: auto;
 }
+
+.product-detail-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    align-items: start;
+    gap: 24px;
+}
+
+.product-info-panel,
+.product-locations-panel {
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+}
+
+.product-info-panel > h2 {
+    margin: 0 0 24px;
+}
+
+.product-info-panel h3 {
+    margin: 26px 0 12px;
+    font-size: 14px;
+}
+
+.product-facts {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+}
+
+.product-facts > div {
+    display: grid;
+    gap: 4px;
+}
+
+.product-facts dt {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.product-facts dd {
+    margin: 0;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.product-description {
+    color: var(--muted);
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.product-description p {
+    margin: 0 0 12px;
+}
+
+.category-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.category-badges li {
+    overflow-wrap: anywhere;
+}
+
+.position-link {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid #bce9e4;
+    border-radius: 6px;
+    color: var(--accent-dark);
+    background: var(--accent-light);
+    font-weight: 700;
+}
+
+.product-stock-empty {
+    padding: 24px 0;
+}
+
+.product-stock-empty h3 {
+    margin: 0 0 8px;
+}
+
+.product-stock-empty p {
+    margin: 0 0 20px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+@media (max-width: 1100px) {
+    .product-detail-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(min(100%, 260px), 1fr)
+    );
+    gap: 22px;
+}
+
+.category-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+}
+
+.category-icon {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+}
+
+.category-card h2 {
+    margin: 18px 0 10px;
+    overflow-wrap: anywhere;
+}
+
+.category-description {
+    margin: 0 0 24px;
+    color: var(--muted);
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.category-description p {
+    margin: 0 0 10px;
+}
+
+.category-card > .button {
+    margin-top: auto;
+}

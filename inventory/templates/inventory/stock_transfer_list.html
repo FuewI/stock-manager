@@ -3,37 +3,105 @@
 {% block title %}Transfer history — Stock Manager{% endblock %}
 
 {% block content %}
-    <h1>Transfer history</h1>
+    <div class="page-heading">
+        <div>
+            <h1>Transfer history</h1>
+            <p class="page-description">
+                Track stock movements between warehouses, stores, and bins.
+            </p>
+        </div>
 
-    {% for transfer in transfers %}
-        <article>
-            <h2>{{ transfer.product.name }}</h2>
+        <a class="button button-secondary"
+           href="{% url 'storage:storage_space_list' %}">
+            Open storage spaces
+        </a>
+    </div>
 
-            <p>Quantity moved: {{ transfer.quantity }}</p>
+    <section class="transfer-panel" aria-labelledby="transfer-list-title">
+        <div class="panel-heading">
+            <h2 id="transfer-list-title">Recorded movements</h2>
+            <span class="badge">Newest first</span>
+        </div>
 
-            <p>
-                From:
-                <a href="{% url 'storage:storage_bin_detail' transfer.source_bin.pk %}">
-                    {{ transfer.source_bin.storage_space.name }}
-                    — Row {{ transfer.source_bin.row }},
-                    Column {{ transfer.source_bin.column }}
+        {% if transfers %}
+            <div class="table-scroll">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">From</th>
+                            <th scope="col">To</th>
+                            <th scope="col">Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for transfer in transfers %}
+                            <tr>
+                                <td>
+                                    <a class="transfer-product"
+                                       href="{% url 'products:product_detail' transfer.product.pk %}">
+                                        {{ transfer.product.name }}
+                                    </a>
+                                    <span class="transfer-sku">
+                                        {{ transfer.product.sku }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="transfer-quantity">
+                                        {{ transfer.quantity }} items
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <a class="transfer-location"
+                                       href="{% url 'storage:storage_space_detail' transfer.source_bin.storage_space_id %}?bin={{ transfer.source_bin.pk }}">
+                                        <span>
+                                            {{ transfer.source_bin.storage_space.name }}
+                                        </span>
+                                        <span class="transfer-position">
+                                            Position {{ transfer.source_bin.position_code }}
+                                        </span>
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <a class="transfer-location"
+                                       href="{% url 'storage:storage_space_detail' transfer.destination_bin.storage_space_id %}?bin={{ transfer.destination_bin.pk }}">
+                                        <span>
+                                            {{ transfer.destination_bin.storage_space.name }}
+                                        </span>
+                                        <span class="transfer-position">
+                                            Position {{ transfer.destination_bin.position_code }}
+                                        </span>
+                                    </a>
+                                </td>
+
+                                <td class="table-date">
+                                    {{ transfer.created_at|date:"d M Y" }}
+                                    <span class="transfer-time">
+                                        {{ transfer.created_at|date:"H:i" }}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h2>No transfers yet</h2>
+                <p>
+                    Select an occupied bin on a storage map
+                    and use Move stock to record your first transfer.
+                </p>
+                <a class="button button-primary"
+                   href="{% url 'storage:storage_space_list' %}">
+                    Open storage spaces
                 </a>
-            </p>
-
-            <p>
-                To:
-                <a href="{% url 'storage:storage_bin_detail' transfer.destination_bin.pk %}">
-                    {{ transfer.destination_bin.storage_space.name }}
-                    — Row {{ transfer.destination_bin.row }},
-                    Column {{ transfer.destination_bin.column }}
-                </a>
-            </p>
-
-            <p>
-                Date: {{ transfer.created_at|date:"d M Y, H:i" }}
-            </p>
-        </article>
-    {% empty %}
-        <p>No transfers recorded yet.</p>
-    {% endfor %}
+            </div>
+        {% endif %}
+    </section>
 {% endblock %}

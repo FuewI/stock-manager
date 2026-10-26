@@ -33,7 +33,9 @@
                     {{ space.rows }} × {{ space.columns }}
                 </span>
             </div>
-
+            <p class="page-description">
+                Scroll inside the map to explore all positions.
+            </p>
             <div class="storage-grid-scroll">
                 <div class="storage-grid"
                      style="--grid-columns: {{ space.columns }};">
@@ -118,6 +120,13 @@
                     <details class="panel-transfer" {% if receive_form.errors %}open{% endif %}>
                         <summary>Receive stock</summary>
 
+                        {% if not receive_form.product.field.queryset %}
+                            <p class="page-description">
+                                Create a product before receiving stock.
+                                <a href="{% url 'products:product_create' %}">Create product</a>
+                            </p>
+                        {% endif %}
+
                         <form
                             method="post"
                             action="{% url 'inventory:stock_receive' selected_bin.pk %}"
@@ -139,7 +148,15 @@
                         <p class="page-description">
                             Moving from <strong>{{ selected_bin }}</strong>
                         </p>
-                        
+
+                        {% if not transfer_form.destination_bin.field.queryset %}
+                            <p class="page-description">
+                                No compatible destination bins have room for this product.
+                                Free space in a compatible bin or
+                                <a href="{% url 'storage:storage_space_create' %}">create another storage space</a>.
+                            </p>
+                        {% endif %}
+
                         <form
                             method="post"
                             action="{% url 'inventory:stock_transfer' selected_bin.pk %}"

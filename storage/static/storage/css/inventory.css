@@ -1,0 +1,57 @@
+.transfer-panel {
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+}
+
+.transfer-product {
+    color: var(--text);
+    font-weight: 650;
+}
+
+.transfer-product:hover {
+    color: var(--accent-dark);
+}
+
+.transfer-sku,
+.transfer-time {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.transfer-quantity {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    font-size: 12px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.transfer-location {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 120px;
+}
+
+.transfer-position {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.transfer-panel .empty-state {
+    border: none;
+}
+
+@media (max-width: 760px) {
+    .transfer-panel {
+        padding: 16px;
+    }
+}

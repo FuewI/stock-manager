@@ -12,6 +12,13 @@
     <p>Capacity: {{ bin.capacity }} storage units</p>
     <p>Currently stored: {{ current_quantity }} items</p>
 
+    {% if not form.product.field.queryset %}
+        <p class="page-description">
+            Create a product before receiving stock.
+            <a href="{% url 'products:product_create' %}">Create product</a>
+        </p>
+    {% endif %}
+
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

@@ -49,25 +49,6 @@ a.summary-card:hover {
     background: var(--surface);
 }
 
-.panel-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.panel-heading h2 {
-    margin: 0;
-}
-
-.panel-heading > a {
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-}
-
 .panel-empty {
     margin: 0;
     padding: 24px 0;

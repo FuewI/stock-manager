@@ -3,11 +3,25 @@
 {% block title %}Page not found — Stock Manager{% endblock %}
 
 {% block content %}
-    <h1>404 — Page not found</h1>
-    <p>The page you requested does not exist.</p>
+    <section class="not-found" aria-labelledby="not-found-title">
+        <span class="not-found-code" aria-hidden="true">404</span>
 
-    <a href="{% url 'home' %}">Return to overview</a>
-    <a href="{% url 'storage:storage_space_list' %}">
-        View storage spaces
-    </a>
+        <h1 id="not-found-title">This position doesn’t exist</h1>
+
+        <p>
+            The page may have moved, or the address may be incorrect.
+            Let’s get you back to your inventory.
+        </p>
+
+        <div class="page-actions">
+            <a class="button button-primary" href="{% url 'home' %}">
+                Back to overview
+            </a>
+
+            <a class="button button-secondary"
+               href="{% url 'storage:storage_space_list' %}">
+                Storage spaces
+            </a>
+        </div>
+    </section>
 {% endblock %}

@@ -3,20 +3,40 @@
 {% block title %}Delete storage space — Stock Manager{% endblock %}
 
 {% block content %}
-    <h1>Delete {{ space.name }}?</h1>
+    <section class="confirmation-card"
+             aria-labelledby="confirmation-title">
+        <span class="badge">Delete storage space</span>
 
-    <p>This will permanently delete this storage space and its bins.</p>
+        <h1 id="confirmation-title">Delete {{ space.name }}?</h1>
 
-    {% if error %}
-        <p role="alert">{{ error }}</p>
-    {% endif %}
+        <p class="page-description">
+            {{ space.get_space_type_display }}
+            · {{ space.rows }} rows × {{ space.columns }} columns
+        </p>
 
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Confirm deletion</button>
-    </form>
+        <p>
+            This permanently deletes the storage space and all its bins.
+            Storage spaces with stock or bin transfer history cannot
+            be deleted.
+        </p>
 
-    <a href="{% url 'storage:storage_space_detail' space.pk %}">
-        Cancel
-    </a>
+        {% if error %}
+            <p class="confirmation-error" role="alert">{{ error }}</p>
+        {% endif %}
+
+        <form method="post" class="confirmation-form">
+            {% csrf_token %}
+
+            <div class="page-actions">
+                <button class="button button-danger" type="submit">
+                    Confirm deletion
+                </button>
+
+                <a class="button button-secondary"
+                   href="{% url 'storage:storage_space_detail' space.pk %}">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </section>
 {% endblock %}
